@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ship Hull Generator</title>
+  <script type="module" crossorigin src="/assets/index-Bgka5ekT.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BYS8kEGI.css">
+</head>
+<body>
+  <div id="app">
+    <aside id="controls">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 20 L12 4 L22 20 Z" />
+          <path d="M2 20 Q12 16 22 20" />
+          <line x1="12" y1="4" x2="12" y2="14" />
+        </svg>
+        Ship Hull Gen
+      </div>
+
+      <!-- Hull type selector -->
+      <section class="section">
+        <h3 class="section-title">Hull Type</h3>
+        <div id="hull-type-grid" class="hull-grid">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- Dimensions -->
+      <section class="section">
+        <h3 class="section-title">Dimensions</h3>
+        <div class="controls-group">
+          <div class="control-row">
+            <label>Length <span class="unit">blocks</span></label>
+            <input type="range" id="dim-length" min="6" max="200" value="30" />
+            <input type="number" id="dim-length-n" min="6" max="999" value="30" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Beam <span class="unit">width</span></label>
+            <input type="range" id="dim-beam" min="4" max="100" value="14" />
+            <input type="number" id="dim-beam-n" min="4" max="999" value="14" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Draft <span class="unit">depth</span></label>
+            <input type="range" id="dim-draft" min="2" max="60" value="8" />
+            <input type="number" id="dim-draft-n" min="2" max="999" value="8" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Thickness <span class="unit">shell</span></label>
+            <input type="range" id="dim-thickness" min="1" max="8" value="1" />
+            <input type="number" id="dim-thickness-n" min="1" max="99" value="1" class="num-input" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Global shape controls -->
+      <section class="section">
+        <h3 class="section-title">Rake <button class="reset-btn" data-reset="rake">Reset</button></h3>
+        <div class="controls-group">
+          <div class="control-row">
+            <label>Bow Rake <span class="unit">angle</span></label>
+            <input type="range" id="bow-rake" min="-0.45" max="0.45" step="0.01" value="0" />
+            <input type="number" id="bow-rake-n" min="-0.45" max="0.45" step="0.01" value="0" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Stern Rake <span class="unit">angle</span></label>
+            <input type="range" id="stern-rake" min="-0.45" max="0.45" step="0.01" value="0" />
+            <input type="number" id="stern-rake-n" min="-0.45" max="0.45" step="0.01" value="0" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Bow Bulge <span class="unit">curve</span></label>
+            <input type="range" id="bow-bulge" min="-0.3" max="0.3" step="0.01" value="0" />
+            <input type="number" id="bow-bulge-n" min="-0.3" max="0.3" step="0.01" value="0" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Stern Bulge <span class="unit">curve</span></label>
+            <input type="range" id="stern-bulge" min="-0.3" max="0.3" step="0.01" value="0" />
+            <input type="number" id="stern-bulge-n" min="-0.3" max="0.3" step="0.01" value="0" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Bow Round <span class="unit">plan</span></label>
+            <input type="range" id="bow-round" min="0" max="1" step="0.05" value="0" />
+            <input type="number" id="bow-round-n" min="0" max="1" step="0.05" value="0" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Stern Round <span class="unit">plan</span></label>
+            <input type="range" id="stern-round" min="0" max="1" step="0.05" value="0" />
+            <input type="number" id="stern-round-n" min="0" max="1" step="0.05" value="0" class="num-input" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h3 class="section-title">Bow Rise <button class="reset-btn" data-reset="bow-rise">Reset</button></h3>
+        <div class="controls-group">
+          <div class="control-row">
+            <label>Length <span class="unit">fraction</span></label>
+            <input type="range" id="bow-rise-len" min="0" max="0.45" step="0.01" value="0" />
+            <input type="number" id="bow-rise-len-n" min="0" max="0.45" step="0.01" value="0" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Height <span class="unit">blocks</span></label>
+            <input type="range" id="bow-rise-h" min="0" max="20" step="1" value="0" />
+            <input type="number" id="bow-rise-h-n" min="0" max="99" step="1" value="0" class="num-input" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h3 class="section-title">Stern Rise <button class="reset-btn" data-reset="stern-rise">Reset</button></h3>
+        <div class="controls-group">
+          <div class="control-row">
+            <label>Length <span class="unit">fraction</span></label>
+            <input type="range" id="stern-rise-len" min="0" max="0.45" step="0.01" value="0" />
+            <input type="number" id="stern-rise-len-n" min="0" max="0.45" step="0.01" value="0" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Height <span class="unit">blocks</span></label>
+            <input type="range" id="stern-rise-h" min="0" max="20" step="1" value="0" />
+            <input type="number" id="stern-rise-h-n" min="0" max="99" step="1" value="0" class="num-input" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Ribs -->
+      <section class="section">
+        <h3 class="section-title">Ribs <button class="reset-btn" data-reset="ribs">Reset</button></h3>
+        <div class="controls-group">
+          <div class="control-row">
+            <label>Spacing <span class="unit">blocks</span></label>
+            <input type="range" id="rib-spacing" min="0" max="20" step="1" value="0" />
+            <input type="number" id="rib-spacing-n" min="0" max="99" step="1" value="0" class="num-input" />
+          </div>
+          <div class="control-row">
+            <label>Thickness <span class="unit">blocks</span></label>
+            <input type="range" id="rib-thickness" min="0" max="6" step="1" value="0" />
+            <input type="number" id="rib-thickness-n" min="0" max="99" step="1" value="0" class="num-input" />
+          </div>
+          <div class="control-row toggle-row">
+            <label>Interior Only</label>
+            <label class="toggle"><input type="checkbox" id="ribs-interior" /><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Keel -->
+      <section class="section">
+        <h3 class="section-title">Keel</h3>
+        <div class="controls-group">
+          <div class="control-row">
+            <label>Width <span class="unit">blocks</span></label>
+            <input type="range" id="keel-width" min="0" max="10" step="1" value="0" />
+            <input type="number" id="keel-width-n" min="0" max="99" step="1" value="0" class="num-input" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Hull shape tweaks -->
+      <section class="section" id="tweaks-section">
+        <h3 class="section-title">Shape Tweaks</h3>
+        <div class="controls-group" id="tweaks-group">
+          <!-- populated dynamically based on hull type -->
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="section">
+        <h3 class="section-title">Stats</h3>
+        <div class="stats-grid" id="stats"></div>
+      </section>
+
+      <!-- Export -->
+      <button id="export-btn" class="export-btn">Export .nbt Schematic</button>
+    </aside>
+
+    <main id="viewport">
+      <canvas id="canvas"></canvas>
+      <div id="view-controls">
+        <button class="view-btn" data-angle="0">Front</button>
+        <button class="view-btn" data-angle="1">Side</button>
+        <button class="view-btn" data-angle="2">Top</button>
+        <button class="view-btn" data-angle="4">Bottom</button>
+        <button class="view-btn" data-angle="3">ISO</button>
+      </div>
+      <div id="perf"></div>
+    </main>
+
+    <div id="palette-wrapper">
+      <button id="palette-toggle" title="Toggle palette">&#x25B6;</button>
+    <aside id="palette">
+      <div class="block-slots">
+        <button class="block-slot active" data-slot="hull" title="Hull block">
+          <div class="slot-swatch" id="hull-swatch"></div>
+          <span>Hull</span>
+          <span class="slot-block-name" id="hull-block-name"></span>
+        </button>
+        <button class="block-slot" data-slot="rib" title="Rib block">
+          <div class="slot-swatch" id="rib-swatch"></div>
+          <span>Rib</span>
+          <span class="slot-block-name" id="rib-block-name"></span>
+          <span class="slot-clear" data-clear="rib">&times;</span>
+        </button>
+        <button class="block-slot" data-slot="keel" title="Keel block">
+          <div class="slot-swatch" id="keel-swatch"></div>
+          <span>Keel</span>
+          <span class="slot-block-name" id="keel-block-name"></span>
+          <span class="slot-clear" data-clear="keel">&times;</span>
+        </button>
+        <button class="block-slot" data-slot="deck" title="Deck surface block">
+          <div class="slot-swatch" id="deck-swatch"></div>
+          <span>Deck</span>
+          <span class="slot-block-name" id="deck-block-name"></span>
+          <span class="slot-clear" data-clear="deck">&times;</span>
+        </button>
+        <button class="block-slot" data-slot="border" title="Deck edge/rail block">
+          <div class="slot-swatch" id="border-swatch"></div>
+          <span>Rail</span>
+          <span class="slot-block-name" id="border-block-name"></span>
+          <span class="slot-clear" data-clear="border">&times;</span>
+        </button>
+      </div>
+      <div class="palette-header">
+        <span></span><span>Plnk</span><span>Log</span><span>Strp</span><span>Misc</span><span></span>
+      </div>
+      <div class="palette-grid" id="palette-grid">
+        <!-- populated by JS -->
+      </div>
+      <input type="text" id="custom-block-id" placeholder="Custom ID" class="text-input palette-custom" />
+    </aside>
+    </div>
+  </div>
+
+</body>
+</html>
