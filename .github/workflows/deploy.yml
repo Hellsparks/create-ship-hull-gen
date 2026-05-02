@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
 
+# Cancel any in-progress deployment when a new push comes in
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pages: write
@@ -20,7 +25,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm install
