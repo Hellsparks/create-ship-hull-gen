@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.nbt
+*.zip
+create-ship-hull-gen/
